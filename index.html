@@ -1,5 +1,10 @@
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Fraunces:ital,wght@0,700;1,700&amp;display=swap" rel="stylesheet"/>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PixelDrop — Free Stock Media</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -487,8 +492,8 @@ footer{border-top:2px solid var(--border);background:var(--white);padding:2.5rem
   .hero-stats{flex-direction:row;flex-wrap:wrap}
 }
 </style>
-
-
+</head>
+<body>
 
 <!-- ══ HEADER ══ -->
 <header>
@@ -511,7 +516,7 @@ footer{border-top:2px solid var(--border);background:var(--white);padding:2.5rem
     <div class="hero-left">
       <div class="hero-badge">100% Free Stock Media</div>
       <h1>Download <span class="c1">Beautiful</span><br/>Media — <span class="c2">Free</span> Forever.</h1>
-      <p>Premium-quality images, videos, vectors, illustrations &amp; sounds — curated by one creator, free for everyone. Support through donations.</p>
+      <p>Premium-quality images, videos, vectors, illustrations & sounds — curated by one creator, free for everyone. Support through donations.</p>
       <div class="hero-btns">
         <a href="#grid" class="hbtn hbtn-primary">🎨 Browse Files</a>
         <button class="hbtn hbtn-secondary" onclick="showDonate()">💛 Support Us</button>
@@ -689,8 +694,6 @@ footer{border-top:2px solid var(--border);background:var(--white);padding:2.5rem
 </div>
 
 <script>
-//<![CDATA[
-
 
 // ══ GOOGLE SHEETS CONFIG ══
 // আপনার Google Sheet ID এখানে দিন
@@ -930,7 +933,41 @@ function openDl(id,e){
 function closeDl(){document.getElementById('dl-modal').classList.remove('open')}
 
 function doDownload(){
-  if(dlItem){dlItem.downloads++;showToast('⬇️',`"${dlItem.title}" download started!`);closeDl();}
+  if(!dlItem) return;
+  dlItem.downloads++;
+  closeDl();
+
+  if(dlItem.url){
+    // Convert Google Drive view URL to direct download URL
+    let downloadUrl = dlItem.url;
+
+    // If it's a Drive uc?export=view link, change to export=download
+    if(downloadUrl.includes('drive.google.com/uc?export=view')){
+      downloadUrl = downloadUrl.replace('export=view', 'export=download');
+    }
+    // If it's a Drive thumbnail link, get the actual file
+    else if(downloadUrl.includes('drive.google.com/thumbnail')){
+      const idMatch = downloadUrl.match(/id=([a-zA-Z0-9_-]+)/);
+      if(idMatch) downloadUrl = 'https://drive.google.com/uc?export=download&id=' + idMatch[1];
+    }
+    // If it's a regular drive view link
+    else if(downloadUrl.includes('drive.google.com/file/d/')){
+      const idMatch = downloadUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if(idMatch) downloadUrl = 'https://drive.google.com/uc?export=download&id=' + idMatch[1];
+    }
+
+    // Create invisible link and click it
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = dlItem.title || 'download';
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast('⬇️', '"' + dlItem.title + '" downloading...');
+  } else {
+    showToast('⚠️', 'No download URL for this file.');
+  }
 }
 
 // ── DONATE ──
@@ -1119,8 +1156,6 @@ function openSheetNew() {
   showToast('📋','নতুন Sheet খুলছে...');
 }
 
-
-//]]>
 </script>
 
 <!-- ══ DONATE MODAL (Binance Only) ══ -->
@@ -1137,7 +1172,7 @@ function openSheetNew() {
         <span style="background:#26a17b;color:#fff;border-radius:50%;width:26px;height:26px;display:inline-grid;place-items:center;font-size:.85rem;font-weight:900">₮</span>
         USDT
       </div>
-      <div style="font-size:.8rem;color:#92400e">Nickname: <strong>User-2fa62</strong> &amp;nbsp;·&amp;nbsp; ID: <strong>1217684149</strong></div>
+      <div style="font-size:.8rem;color:#92400e">Nickname: <strong>User-2fa62</strong> &nbsp;·&nbsp; ID: <strong>1217684149</strong></div>
     </div>
 
     <div style="background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(249,115,22,.06));border:1.5px solid rgba(245,158,11,.25);border-radius:14px;padding:1rem;margin-bottom:1.25rem;font-size:.84rem;color:var(--muted);line-height:1.6;text-align:left">
@@ -1225,3 +1260,5 @@ function openSheetNew() {
   </div>
 </div>
 
+</body>
+</html>
